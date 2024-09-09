@@ -13,11 +13,11 @@ class ConvVAE(nn.Module):
         self.enc_conv4 = nn.Conv2d(128, 256, kernel_size=4, stride=2, padding=1)  # 8x8
         self.enc_conv5 = nn.Conv2d(256, 512, kernel_size=4, stride=2, padding=1)  # 4x4
         self.enc_conv6 = nn.Conv2d(512, 1024, kernel_size=4, stride=2, padding=1)  # 2x2
-        self.mu_layer = nn.Linear(1024 * 2 * 2, latent_dim)  # Latent space mean
-        self.logvar_layer = nn.Linear(1024 * 2 * 2, latent_dim)  # Latent space log-variance
+        self.mu_layer = nn.Conv2d(1024 * 2 * 2, latent_dim)  # Latent space mean
+        self.logvar_layer = nn.Conv2d(1024 * 2 * 2, latent_dim)  # Latent space log-variance
         
         # decoder layers
-        self.fc_dec = nn.Linear(latent_dim, 1024 * 2 * 2)
+        self.fc_dec = nn.Conv2d(latent_dim, 1024 * 2 * 2)
         self.dec_conv1 = nn.ConvTranspose2d(1024, 512, kernel_size=4, stride=2, padding=1)  # 4x4
         self.dec_conv2 = nn.ConvTranspose2d(512, 256, kernel_size=4, stride=2, padding=1)  # 8x8
         self.dec_conv3 = nn.ConvTranspose2d(256, 128, kernel_size=4, stride=2, padding=1)  # 16x16
@@ -32,7 +32,7 @@ class ConvVAE(nn.Module):
         h = F.relu(self.enc_conv4(h))
         h = F.relu(self.enc_conv5(h))
         h = F.relu(self.enc_conv6(h))
-        h = h.view(h.size(0), -1)  # flatten
+        # h = h.view(h.size(0), -1)  # flatten
         mu = self.mu_layer(h)
         logvar = self.logvar_layer(h)
         return mu, logvar
